@@ -28,11 +28,37 @@ STR = "08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
 
 GRID = STR.split("\n").map! { |i| i.split(" ").map{ |j| j.to_i } }
 
-width = GRID[0].legnth
+width = GRID[0].length
 height = GRID.length
 
-(0..(width-1).each do |i|
-  (0..(height-1).each do |j|
+max = 0
 
+(0..(width-1)).each do |i|
+  (0..(height-1)).each do |j|
+    # down
+    if i + 3 < height
+      val = GRID[i][j] * GRID[i+1][j] * GRID[i+2][j] * GRID[i+3][j]
+      max = val if val > max
+    end
+
+    # left
+    if j + 3 < width
+      val = GRID[i][j] * GRID[i][j+1] * GRID[i][j+2] * GRID[i][j+3]
+      max = val if val > max
+    end
+
+    # diag - down right
+    if i + 3 < height && j + 3 < width
+      val = GRID[i][j] * GRID[i+1][j+1] * GRID[i+2][j+2] * GRID[i+3][j+3]
+      max = val if val > max
+    end
+
+    # diag - down left
+    if i + 3 < height && j > 2
+      val = GRID[i][j] * GRID[i+1][j-1] * GRID[i+2][j-2] * GRID[i+3][j-3]
+      max = val if val > max
+    end
   end
 end
+
+puts max
