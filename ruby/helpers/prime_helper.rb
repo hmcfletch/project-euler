@@ -1,7 +1,10 @@
 class PrimeHelper
 
   def initialize
-    @primes = [ 2 ]
+    @primes = [ ]
+    @primes_lookup = {}
+    add_prime(2)
+
     @max_checked = 2
   end
 
@@ -11,6 +14,10 @@ class PrimeHelper
     @primes
   end
 
+  def primes_lookup
+    @primes_lookup
+  end
+
   def max_checked
     @max_checked
   end
@@ -18,9 +25,24 @@ class PrimeHelper
   #
 
   # return the first n primes
+  # will iterate over the first n primes if a block is given
   def primes_first(n)
     primes_first!(n)
-    @primes.first(n)
+
+    if block_given?
+      i = 0
+      @primes.each do |p|
+        if i < n
+          yield p
+          i += 1
+        else
+          break
+        end
+      end
+      true
+    else
+      @primes.first(n)
+    end
   end
 
   # generate the first n primes
@@ -32,24 +54,37 @@ class PrimeHelper
     true
   end
 
+  #
+
   # return primes less or equal to n
+  # will iterate over the primes less than or equal to n if a block is given
   def primes_max(n)
     primes_max!(n)
 
-    # find the index of the prime less than or equal to n
-    idx = if @primes.respond_to?(:bsearch_index)
-      @primes.bsearch_index { |p| p <= n }
+    if block_given?
+      @primes.each do |p|
+        if p <= n
+          yield p
+        else
+          break
+        end
+      end
     else
-      @primes.find_index { |p| p >= n }
-    end
+      # find the index of the prime less than or equal to n
+      idx = if @primes.respond_to?(:bsearch_index)
+        @primes.bsearch_index { |p| p <= n }
+      else
+        @primes.find_index { |p| p >= n }
+      end
 
-    # if idx is nil then we return the whole thing
-    if idx.nil?
-      @primes
-    else
-      idx += 1 if @primes[idx] == n
+      # if idx is nil then we return the whole thing
+      if idx.nil?
+        @primes
+      else
+        idx += 1 if @primes[idx] == n
 
-      @primes.first(idx)
+        @primes.first(idx)
+      end
     end
   end
 
@@ -59,14 +94,16 @@ class PrimeHelper
     # the largest number we have checked
     if n > @max_checked
       # start at the largest number we have checked
-      (@max_checked..n).each do |i|
-        @primes << i if is_prime?(i)
+      ((@max_checked+1)..n).each do |i|
+        add_prime(i) if is_prime?(i)
       end
       @max_checked = n
     end
 
     true
   end
+
+  #
 
   # return the next prime
   def next_prime
@@ -76,23 +113,26 @@ class PrimeHelper
 
   # generate the next prime
   def next_prime!
-    i = @max_checked
+    i = @max_checked+1
     current_max = @primes.last
     while current_max == @primes.last
       i += 1
-      @primes << i if is_prime?(i)
+      add_prime(i) if is_prime?(i)
     end
     @max_checked = @primes.last
 
     true
   end
 
+  #
+
   # check if n is prime
   def is_prime?(n)
-    if n < @primes.last
+    if n <= @primes.last
       # we have already have a prime greater than n,
       # check if this is in our set
-      return !@primes.bsearch { |p| n <=> p }.nil?
+      return @primes_lookup.has_key?(n)
+      # return !@primes.bsearch { |p| n <=> p }.nil?
     elsif n < @max_checked
       # n is greater than our largest prime,
       # but smaller than the largest number we have checked
@@ -123,6 +163,41 @@ class PrimeHelper
     end
 
     true
+  end
+
+  #
+
+  def prime_factors(n)
+    current = n
+    factors = []
+
+    while current != 1
+      if is_prime?(current)
+        p = current
+        factors << p
+        current = current / p
+      else
+        sqrt_floor = Math.sqrt(current).floor
+        primes_max(sqrt_floor).each do |p|
+          if current % p == 0
+            factors << p
+            current = current / p
+            break
+          end
+        end
+      end
+    end
+
+    factors
+  end
+
+  private
+
+  def add_prime(p)
+    @primes << p
+    @primes_lookup[p] = @primes.length - 1
+
+    p
   end
 
 end
