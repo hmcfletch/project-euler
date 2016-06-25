@@ -3,7 +3,25 @@ class Fibonacci
   class << self
 
     def term(n)
+      raise "n > 0" if n < 1
 
+      if n == 1
+        [ 1 ]
+      elsif n == 2
+        [ 1, 2 ]
+      else
+        a = 1
+        b = 2
+        val = 0
+
+        (3..n).each do |i|
+          val = a + b
+          a = b
+          b = val
+        end
+
+        val
+      end
     end
 
     def terms(n)
@@ -15,8 +33,14 @@ class Fibonacci
         [ 1, 2 ]
       else
         nums = [ 1, 2 ]
-      end
 
+        while nums.length < n
+          i = nums.length
+          nums << nums[i-2] + nums[i-1]
+        end
+
+        nums
+      end
     end
 
     def find_term(a:nil, &block)
