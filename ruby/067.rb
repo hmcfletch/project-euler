@@ -20,7 +20,7 @@
 
 triangle = []
 
-f = File.open("data_files/p067_triangle.txt", "r") do |f|
+f = File.open("../data_files/p067_triangle.txt", "r") do |f|
   f.each_line do |line|
     triangle << line.split(" ").map{ |j| j.to_i }
   end

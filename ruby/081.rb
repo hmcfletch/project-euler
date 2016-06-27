@@ -14,7 +14,7 @@
 
 matrix = []
 
-f = File.open("data_files/p081_matrix.txt", "r") do |f|
+f = File.open("../data_files/p081_matrix.txt", "r") do |f|
   f.each_line do |line|
     matrix << line.split(",").map{ |j| j.to_i }
   end

@@ -22,7 +22,7 @@ end
 
 name_array = []
 
-f = File.open("data_files/p022_names.txt", "r") do |f|
+f = File.open("../data_files/p022_names.txt", "r") do |f|
   f.each_line do |line|
     name_array << line
   end
