@@ -1,9 +1,7 @@
 class CombinatoricsHelper
-
   class << self
-
     def factorial(n)
-      (1..n).inject(1) { |memo, i| memo = memo * i }
+      (1..n).inject(1) { |memo, i| memo *= i }
     end
 
     def n_choose_k(n, k)
@@ -17,12 +15,12 @@ class CombinatoricsHelper
     def power_set(set)
       ret = set.class[set.class[]]
       set.each do |s|
-          deepcopy = ret.map { |x| set.class.new(x) }
-          deepcopy.map { |r| r << s }
-          ret = ret + deepcopy
+        deepcopy = ret.map { |x| set.class.new(x) }
+        deepcopy.map { |r| r << s }
+        ret += deepcopy
       end
-      return ret
-  end
 
+      ret
+    end
   end
 end

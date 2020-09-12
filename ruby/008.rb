@@ -66,5 +66,5 @@ while i < (NUM_STR.length - (n - 1))
   i += 1
 end
 
-puts max_nums.scan(/\w/).inspect
+puts max_nums.scan(/\w/).collect(&:to_i).inspect
 puts max_product

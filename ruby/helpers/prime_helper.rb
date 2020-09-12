@@ -1,4 +1,5 @@
 class PrimeHelper
+  attr_reader :primes_lookup, :max_checked
 
   def initialize
     @primes = [ ]
@@ -14,14 +15,6 @@ class PrimeHelper
     @primes
   end
 
-  def primes_lookup
-    @primes_lookup
-  end
-
-  def max_checked
-    @max_checked
-  end
-
   #
 
   # return the first n primes
@@ -32,12 +25,10 @@ class PrimeHelper
     if block_given?
       i = 0
       @primes.each do |p|
-        if i < n
-          yield p
-          i += 1
-        else
-          break
-        end
+        break if i >= n
+
+        yield p
+        i += 1
       end
       true
     else
@@ -47,9 +38,7 @@ class PrimeHelper
 
   # generate the first n primes
   def primes_first!(n)
-    while @primes.length < n
-      next_prime!
-    end
+    next_prime! while @primes.length < n
 
     true
   end
@@ -63,19 +52,18 @@ class PrimeHelper
 
     if block_given?
       @primes.each do |p|
-        if p <= n
-          yield p
-        else
-          break
-        end
+        break if p > n
+
+        yield p
       end
     else
       # find the index of the prime less than or equal to n
-      idx = if @primes.respond_to?(:bsearch_index)
-        @primes.bsearch_index { |p| p <= n }
-      else
-        @primes.find_index { |p| p >= n }
-      end
+      idx =
+        if @primes.respond_to?(:bsearch_index)
+          @primes.bsearch_index { |p| p <= n }
+        else
+          @primes.find_index { |p| p >= n }
+        end
 
       # if idx is nil then we return the whole thing
       if idx.nil?
@@ -113,7 +101,7 @@ class PrimeHelper
 
   # generate the next prime
   def next_prime!
-    i = @max_checked+1
+    i = @max_checked + 1
     current_max = @primes.last
     while current_max == @primes.last
       i += 1
@@ -127,7 +115,7 @@ class PrimeHelper
   #
 
   # check if n is prime
-  def is_prime?(n)
+  def prime?(n)
     if n <= @primes.last
       # we have already have a prime greater than n,
       # check if this is in our set
@@ -175,13 +163,13 @@ class PrimeHelper
       if is_prime?(current)
         p = current
         factors << p
-        current = current / p
+        current /= p
       else
         sqrt_floor = Math.sqrt(current).floor
         primes_max(sqrt_floor).each do |p|
-          if current % p == 0
+          if (current % p).zero?
             factors << p
-            current = current / p
+            current /= p
             break
           end
         end
@@ -199,5 +187,4 @@ class PrimeHelper
 
     p
   end
-
 end

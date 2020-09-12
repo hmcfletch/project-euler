@@ -7,7 +7,6 @@
 # Evaluate the sum of all the amicable numbers under 10000.
 
 class Integer
-
   def proper_divisors
     sqrt = Math.sqrt(self).floor
 
@@ -31,30 +30,51 @@ class Integer
     n_sum = n.sum_of_proper_divisors
     self == n_sum && s_sum == n
   end
-
 end
 
 puts "======"
 puts 220.amicable?(284)
 puts "======"
 
-a = {}
+pds = (1..10_000).collect(&:proper_divisors)
 
-(1..100).each do |i|
-  sum = i.sum_of_proper_divisors
+total = 0
 
-  a[sum] = [] if a[sum].nil?
-
-  b = a[sum]
-  a[sum] = b.push(i)
+pds.each_with_index do |pd, i|
+  sum = pd.sum
+  n = i + 1
+  # puts '+++++++++++'
+  # puts "  #{n} => #{pd.inspect} => #{sum}"
+  next if n == sum || sum == 0 || pds[sum-1].nil?
+  b = pds[sum-1]
+  b_sum = b.sum
+  # puts "  #{sum} => #{b.inspect} => #{b_sum}"
+  # str = "**************" if n == b_sum
+  # puts "  #{n} <=> #{b_sum} #{str}"
+  total += n if n == b_sum
 end
 
-puts a.inspect
+puts "*** #{total} ***"
 
-puts "======================="
+# a = {}
 
-puts a.reject { |k, v| v.length == 1 }.inspect
+# (1..100).each do |i|
+#   sum = i.sum_of_proper_divisors
 
-a.reject { |k, v| v.length == 1 }.values.flatten.inject(0, :+)
+#   a[sum] = [] if a[sum].nil?
 
-puts a.values.flatten.inject(0, :+)
+#   b = a[sum]
+#   a[sum] = b.push(i)
+# end
+
+# puts a.inspect
+
+# puts "======================="
+
+# puts a.reject { |k, v| v.length == 1 }.inspect
+
+# a.reject { |k, v| v.length == 1 }.values.flatten.inject(0, :+)
+
+# puts a.values.flatten.inject(0, :+)
+
+# puts

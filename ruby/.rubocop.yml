@@ -1,0 +1,32 @@
+AllCops:
+  DisabledByDefault: true
+
+Layout:
+  Enabled: true
+
+Lint:
+  Enabled: true
+
+Performance:
+  Enabled: true
+
+Style/AndOr:
+  Enabled: true
+
+Style/Semicolon:
+  Enabled: true
+
+Style/HashSyntax:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/RedundantFreeze:
+  Enabled: true
+
+Style/RedundantReturn:
+  Enabled: true
+
+Style/RedundantSelf:
+  Enabled: true

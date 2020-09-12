@@ -7,12 +7,21 @@
 # 1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
 # How many different ways can £2 be made using any number of coins?
 
-VALUES = [ 1, 2, 5, 10, 20, 50, 100, 200 ].reverse
+VALUES = [1, 2, 5, 10, 20, 50, 100, 200].reverse
+
+# 1 - 1 [[1]]
+# 2 - 2 [[2], [1,1]]
+# 5 - 4 [[5], [2,2,1], [2,1,1,1], [1,1,1,1,1]]
+# 10 -  [[10], [5,5] [5,2,2,1], ]
+# 50
+# 100
+# 200
+
 num_ways = {
   1 => 1
 }
 ways = {
-  1 => [ [ 1 ] ]
+  1 => [[1]]
 }
 
 # values is expected to be reverse sorted

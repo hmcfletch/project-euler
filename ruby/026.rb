@@ -18,11 +18,10 @@
 # fraction part.
 
 class Integer
-
   def num_digits
-    raise "Only works with whole numbers" unless self == self.floor
+    raise "Only works with whole numbers" unless self == floor
 
-    return 1 if self == 0
+    return 1 if self.zero?
 
     i = self < 0 ? self * -1 : self
     begin
@@ -34,8 +33,7 @@ class Integer
   end
 
   def num_digits_2(min_digits: 1, max_digits: 100)
-    raise "Only works with whole numbers" unless self == self.floor
-    num = nil
+    raise 'Only works with whole numbers' unless self == floor
 
     v = self < 0 ? self * -1 : self
 
@@ -46,7 +44,7 @@ class Integer
   end
 
   def digits
-    nd = self.num_digits
+    nd = num_digits
 
     v = self < 0 ? self * -1 : self
 
@@ -89,11 +87,9 @@ class Integer
 
     sum
   end
-
 end
 
 class Numeric
-
   def digits
     num_whole_digits = self.floor.num_digits
 
@@ -110,7 +106,6 @@ class Numeric
 
     v.floor.digits
   end
-
 end
 
 # [ 643.1234 ].each do |i|
@@ -145,9 +140,60 @@ def long_division(a, b, num_places=10)
   answer
 end
 
-(2..10).each do |i|
-  a = long_division(1, i, 4)
-  a.shift
-  a.unshift("0.")
-  puts a.join
+MAX_DIGITS = 5000
+
+def substring_repeats?(str, substring)
+  len = substring.length
+  num_checks = MAX_DIGITS / len
+
+  num_checks = 10 if num_checks > 10
+
+  (1..num_checks).each do |i|
+    start_idx = len * (i - 1)
+    end_idx = start_idx + len - 1
+    check_str = str[start_idx..end_idx]
+    # puts "  {#{start_idx}, #{end_idx}} => #{check_str}"
+    return false if check_str != substring
+  end
+
+  true
 end
+
+def longest_repeating_substring(str)
+  (1..(MAX_DIGITS / 2)).each do |len|
+    substring = str[0..(len - 1)]
+    # puts "  #{substring}"
+    return substring if substring_repeats?(str, substring)
+  end
+
+  nil
+end
+
+longest_repeater = ''
+d = 2
+
+(2..1000).each do |i|
+  a = long_division(1, i, MAX_DIGITS)
+  a.shift
+  b = ['0.'] + a
+
+  if a.length != MAX_DIGITS - 1
+    # puts "1/#{i} = #{b.join}"
+    next
+  end
+
+  repeater = longest_repeating_substring(a.join)
+
+  if repeater.nil?
+    # puts "1/#{i} = #{b.join}"
+  else
+    if repeater.length > longest_repeater.length
+      longest_repeater = repeater
+      d = i
+    end
+
+    # puts "1/#{i} = 0.(#{repeater})"
+  end
+end
+
+puts "*** #{d} => (#{longest_repeater.length}) #{longest_repeater}"

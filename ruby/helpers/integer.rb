@@ -1,11 +1,9 @@
 class Integer
-
   # digits
-
   def num_digits
-    raise "Only works with whole numbers" unless self == self.floor
+    raise ArgumentError, 'Only works with whole numbers' unless self == floor
 
-    return 1 if self == 0
+    return 1 if self.zero?
 
     i = self < 0 ? self * -1 : self
     begin
@@ -17,8 +15,7 @@ class Integer
   end
 
   def num_digits_2(min_digits: 1, max_digits: 100)
-    raise "Only works with whole numbers" unless self == self.floor
-    num = nil
+    raise ArgumentError, 'Only works with whole numbers' unless self == floor
 
     v = self < 0 ? self * -1 : self
 
@@ -29,7 +26,7 @@ class Integer
   end
 
   def digits
-    nd = self.num_digits
+    nd = num_digits
 
     v = self < 0 ? self * -1 : self
 
@@ -45,7 +42,7 @@ class Integer
   end
 
   def self.number_from_digits(digits = [])
-    raise "Argument can't be empty" if digits.nil? || digits.empty?
+    raise ArgumentError, "Argument can't be empty" if digits.nil? || digits.empty?
 
     sum = 0
     digits.each_with_index do |d, i|
@@ -63,7 +60,7 @@ class Integer
 
     ds = []
     (1..sqrt).each do |i|
-      if self % i == 0
+      if (self % i).zero?
         ds << i
         ds << (self / i)
       end
@@ -84,13 +81,12 @@ class Integer
 
     factors = []
 
-    i = 2
     (2..sqrt_floor).each do |i|
-      if self % i == 0
-        num = self / i
-        factors = factors + [ i ] + num.prime_factors
-        break
-      end
+      next unless (self % i).zero?
+
+      num = self / i
+      factors = factors + [i] + num.prime_factors
+      break
     end
 
     factors = [ self ] if factors.empty?
@@ -103,10 +99,9 @@ class Integer
 
     max_sqrt = Math.sqrt(self).to_i
     factors = []
-    i = 2
 
     (2..max_sqrt).each do |i|
-      if self % i == 0
+      if (self % i).zero?
         factors << i
         factors << (self / i)
       end
@@ -125,11 +120,12 @@ class Integer
     factors = prime_factors
     h = {}
     factors.each do |i|
-      if h.has_key?(i)
-        h[i] = h[i] += 1
-      else
-        h[i] = 1
-      end
+      h[i] =
+        if h.key?(i)
+          h[i] + 1
+        else
+          1
+        end
     end
     h
   end
@@ -137,7 +133,7 @@ class Integer
   def factorable_by?(factors = [])
     sqrt = Math.sqrt(self)
     factors.each do |i|
-      return true if self % i == 0
+      return true if (self % i).zero?
       return false if i > sqrt
     end
 
@@ -171,12 +167,10 @@ class Integer
 
     return false if sqrt == sqrt_floor
 
-    ds = []
     (2..sqrt_floor).each do |i|
-      return false if self % i == 0
+      return false if (self % i).zero?
     end
 
     true
   end
-
 end
