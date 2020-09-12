@@ -46,5 +46,9 @@ class Digits
 
       sum
     end
+
+    def reverse_number(n)
+      number_from_digits(digits(n).reverse)
+    end
   end
 end
