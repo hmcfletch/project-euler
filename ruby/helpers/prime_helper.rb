@@ -2,9 +2,9 @@ class PrimeHelper
   attr_reader :primes_lookup, :max_checked
 
   def initialize
-    @primes = [ ]
+    @primes = []
     @primes_lookup = {}
-    add_prime(2)
+    add(2)
 
     @max_checked = 2
   end
@@ -17,10 +17,18 @@ class PrimeHelper
 
   #
 
+  def [](idx)
+    first!(idx + 1)
+
+    @primes[idx]
+  end
+
+  #
+
   # return the first n primes
   # will iterate over the first n primes if a block is given
-  def primes_first(n)
-    primes_first!(n)
+  def first(n)
+    first!(n)
 
     if block_given?
       i = 0
@@ -37,8 +45,8 @@ class PrimeHelper
   end
 
   # generate the first n primes
-  def primes_first!(n)
-    next_prime! while @primes.length < n
+  def first!(n)
+    next! while @primes.length < n
 
     true
   end
@@ -47,8 +55,8 @@ class PrimeHelper
 
   # return primes less or equal to n
   # will iterate over the primes less than or equal to n if a block is given
-  def primes_max(n)
-    primes_max!(n)
+  def max(n)
+    max!(n)
 
     if block_given?
       @primes.each do |p|
@@ -77,13 +85,13 @@ class PrimeHelper
   end
 
   # generate primes less or equal to n
-  def primes_max!(n)
+  def max!(n)
     # we only need to do something if n is greater than
     # the largest number we have checked
     if n > @max_checked
       # start at the largest number we have checked
       ((@max_checked+1)..n).each do |i|
-        add_prime(i) if is_prime?(i)
+        add_prime(i) if prime?(i)
       end
       @max_checked = n
     end
@@ -94,18 +102,18 @@ class PrimeHelper
   #
 
   # return the next prime
-  def next_prime
-    next_prime!
+  def next
+    next!
     @primes.last
   end
 
   # generate the next prime
-  def next_prime!
-    i = @max_checked + 1
+  def next!
+    i = @max_checked
     current_max = @primes.last
     while current_max == @primes.last
       i += 1
-      add_prime(i) if is_prime?(i)
+      add(i) if prime?(i)
     end
     @max_checked = @primes.last
 
@@ -155,18 +163,18 @@ class PrimeHelper
 
   #
 
-  def prime_factors(n)
+  def factors(n)
     current = n
     factors = []
 
     while current != 1
-      if is_prime?(current)
+      if prime?(current)
         p = current
         factors << p
         current /= p
       else
         sqrt_floor = Math.sqrt(current).floor
-        primes_max(sqrt_floor).each do |p|
+        max(sqrt_floor).each do |p|
           if (current % p).zero?
             factors << p
             current /= p
@@ -181,7 +189,7 @@ class PrimeHelper
 
   private
 
-  def add_prime(p)
+  def add(p)
     @primes << p
     @primes_lookup[p] = @primes.length - 1
 
